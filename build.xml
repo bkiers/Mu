@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Mu" default="run">
+
+    <property name="project.name"   value="Mu" />
+    <property name="main.class"     value="mu.Main" />
+    <property name="grammar.dir"    value="src/grammar" />
+    <property name="grammar"        value="Mu.g4" />
+    <property name="package"        value="mu" />
+    <property name="build.dir"      value="build" />
+    <property name="main.build.dir" value="${build.dir}/main" />
+    <property name="main.src.dir"   value="src/main" />
+    <property name="main.gen.dir"   value="src/gen" />
+    <property name="script"         value="src/scripts/test.mu" />
+
+    <path id="classpath">
+        <pathelement location="${main.build.dir}" />
+        <fileset dir="lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="clean">
+        <delete dir="${main.build.dir}" />
+    </target>
+
+    <target name="init" depends="clean">
+        <mkdir dir="${main.build.dir}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${main.gen.dir}" destdir="${main.build.dir}" includeantruntime="false">
+            <classpath refid="classpath" />
+        </javac>
+        <javac srcdir="${main.src.dir}" destdir="${main.build.dir}" includeantruntime="false">
+            <classpath refid="classpath" />
+        </javac>
+    </target>
+
+    <target name="generate">
+
+        <echo>generating parser source files...</echo>
+        <java classname="org.antlr.v4.Tool" dir="${grammar.dir}" fork="true" failonerror="true" maxmemory="1024m">
+            <arg value="${grammar}" />
+            <arg value="-visitor" />
+            <classpath refid="classpath" />
+        </java>
+
+        <move todir="${main.gen.dir}/${package}">
+            <fileset dir="${grammar.dir}">
+                <include name="*.java" />
+            </fileset>
+        </move>
+
+        <delete>
+            <fileset dir="${grammar.dir}" includes="*.tokens"/>
+        </delete>
+
+        <antcall target="compile" />
+    </target>
+
+    <target name="run" depends="generate">
+        <java classname="${main.class}">
+            <classpath refid="classpath"/>
+            <arg value="${script}"/>
+        </java>
+    </target>
+
+</project>
