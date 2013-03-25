@@ -1,9 +1,9 @@
 Mu
 ==
 
-A small expression parser using ANTLR 4 supporting most basic operators
+A small expression parser, using ANTLR 4. It supports most basic operators
 and `for`-, `while`- and `log`- (print) statements. It is just a basic
-demonstration how to use the `-visitor` functionality of ANTLR 4.
+demonstration on how to use the `-visitor` functionality of ANTLR 4.
 
 To run the small demo script:
 
