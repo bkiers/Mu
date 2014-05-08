@@ -3,7 +3,7 @@ Mu
 
 A small expression parser, using ANTLR 4. It supports most basic operators
 and `for`-, `while`- and `log`- (print) statements. It is just a basic
-demonstration on how to use the `-visitor` functionality of ANTLR 4.
+demonstration of how to use the `-visitor` functionality of ANTLR 4.
 
 To run [the demo script](https://github.com/bkiers/Mu/blob/master/src/scripts/test.mu):
 
