@@ -1,13 +1,5 @@
 grammar Mu;
 
-@parser::header {
-  package mu;                 
-}
-
-@lexer::header {
-  package mu;                 
-}
-
 parse
  : block EOF
  ;

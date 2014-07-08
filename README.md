@@ -5,7 +5,7 @@ A small expression parser, using ANTLR 4. It supports most basic operators
 and `for`-, `while`- and `log`- (print) statements. It is just a basic
 demonstration of how to use the `-visitor` functionality of ANTLR 4.
 
-To run [the demo script](https://github.com/bkiers/Mu/blob/master/src/scripts/test.mu):
+To run [the demo script](https://github.com/bkiers/Mu/blob/master/src/main/mu/test.mu):
 
 ```
 n = 9;
@@ -28,7 +28,8 @@ do:
 
 ```
 git clone git://github.com/bkiers/Mu.git
-ant -e run
+mvn clean install
+mvn -q exec:java
 ```
 
 which will print the following to your console:
