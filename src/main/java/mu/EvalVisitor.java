@@ -1,5 +1,7 @@
 package mu;
 
+import org.antlr.v4.runtime.misc.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,96 +82,78 @@ public class EvalVisitor extends MuBaseVisitor<Value> {
     }
 
     @Override
-    public Value visitMultExpr(MuParser.MultExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() * right.asDouble());
-    }
+    public Value visitMultiplicationExpr(@NotNull MuParser.MultiplicationExprContext ctx) {
 
-    @Override
-    public Value visitModExpr(MuParser.ModExprContext ctx) {
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() % right.asDouble());
-    }
 
-    @Override
-    public Value visitDivExpr(MuParser.DivExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() / right.asDouble());
-    }
-
-    @Override
-    public Value visitPlusExpr(MuParser.PlusExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        if(left.isDouble() && right.isDouble()) {
-            return new Value(left.asDouble() + right.asDouble());
-        }
-        else {
-            return new Value(left.asString() + right.asString());
+        switch (ctx.op.getType()) {
+            case MuParser.MULT:
+                return new Value(left.asDouble() * right.asDouble());
+            case MuParser.DIV:
+                return new Value(left.asDouble() / right.asDouble());
+            case MuParser.MOD:
+                return new Value(left.asDouble() % right.asDouble());
+            default:
+                throw new RuntimeException("unknown operator: " + MuParser.tokenNames[ctx.op.getType()]);
         }
     }
 
     @Override
-    public Value visitMinusExpr(MuParser.MinusExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() - right.asDouble());
-    }
+    public Value visitAdditiveExpr(@NotNull MuParser.AdditiveExprContext ctx) {
 
-    @Override
-    public Value visitLtExpr(MuParser.LtExprContext ctx) {
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() < right.asDouble());
-    }
 
-    @Override
-    public Value visitLteqExpr(MuParser.LteqExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() <= right.asDouble());
-    }
-
-    @Override
-    public Value visitGtExpr(MuParser.GtExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() > right.asDouble());
-    }
-
-    @Override
-    public Value visitGteqExpr(MuParser.GteqExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asDouble() >= right.asDouble());
-    }
-
-    @Override
-    public Value visitNeqExpr(MuParser.NeqExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        if(left.isDouble() && right.isDouble()) {
-            double diff = Math.abs(left.asDouble() - right.asDouble());
-            return new Value(diff >= SMALL_VALUE);
-        }
-        else {
-            return new Value(!left.equals(right));
+        switch (ctx.op.getType()) {
+            case MuParser.PLUS:
+                return left.isDouble() && right.isDouble() ?
+                        new Value(left.asDouble() + right.asDouble()) :
+                        new Value(left.asString() + right.asString());
+            case MuParser.MINUS:
+                return new Value(left.asDouble() - right.asDouble());
+            default:
+                throw new RuntimeException("unknown operator: " + MuParser.tokenNames[ctx.op.getType()]);
         }
     }
 
     @Override
-    public Value visitEqExpr(MuParser.EqExprContext ctx) {
+    public Value visitRelationalExpr(@NotNull MuParser.RelationalExprContext ctx) {
+
         Value left = this.visit(ctx.expr(0));
         Value right = this.visit(ctx.expr(1));
-        if(left.isDouble() && right.isDouble()) {
-            double diff = Math.abs(left.asDouble() - right.asDouble());
-            return new Value(diff < SMALL_VALUE);
+
+        switch (ctx.op.getType()) {
+            case MuParser.LT:
+                return new Value(left.asDouble() < right.asDouble());
+            case MuParser.LTEQ:
+                return new Value(left.asDouble() <= right.asDouble());
+            case MuParser.GT:
+                return new Value(left.asDouble() > right.asDouble());
+            case MuParser.GTEQ:
+                return new Value(left.asDouble() >= right.asDouble());
+            default:
+                throw new RuntimeException("unknown operator: " + MuParser.tokenNames[ctx.op.getType()]);
         }
-        else {
-            return new Value(left.equals(right));
+    }
+
+    @Override
+    public Value visitEqualityExpr(@NotNull MuParser.EqualityExprContext ctx) {
+
+        Value left = this.visit(ctx.expr(0));
+        Value right = this.visit(ctx.expr(1));
+
+        switch (ctx.op.getType()) {
+            case MuParser.EQ:
+                return left.isDouble() && right.isDouble() ?
+                        new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE) :
+                        new Value(left.equals(right));
+            case MuParser.NEQ:
+                return left.isDouble() && right.isDouble() ?
+                        new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE) :
+                        new Value(!left.equals(right));
+            default:
+                throw new RuntimeException("unknown operator: " + MuParser.tokenNames[ctx.op.getType()]);
         }
     }
 

@@ -42,23 +42,16 @@ log
  ;
 
 expr
- : expr POW<assoc=right> expr #powExpr
- | MINUS expr                 #unaryMinusExpr
- | NOT expr                   #notExpr
- | expr MOD expr              #modExpr
- | expr MULT expr             #multExpr
- | expr DIV expr              #divExpr
- | expr PLUS expr             #plusExpr
- | expr MINUS expr            #minusExpr
- | expr LTEQ expr             #lteqExpr
- | expr GTEQ expr             #gteqExpr
- | expr LT expr               #ltExpr
- | expr GT expr               #gtExpr
- | expr NEQ expr              #neqExpr
- | expr EQ expr               #eqExpr
- | expr AND expr              #andExpr
- | expr OR expr               #orExpr
- | atom                       #atomExpr
+ : expr POW<assoc=right> expr           #powExpr
+ | MINUS expr                           #unaryMinusExpr
+ | NOT expr                             #notExpr
+ | expr op=(MULT | DIV | MOD) expr      #multiplicationExpr
+ | expr op=(PLUS | MINUS) expr          #additiveExpr
+ | expr op=(LTEQ | GTEQ | LT | GT) expr #relationalExpr
+ | expr op=(EQ | NEQ) expr              #equalityExpr
+ | expr AND expr                        #andExpr
+ | expr OR expr                         #orExpr
+ | atom                                 #atomExpr
  ;
 
 atom
