@@ -2,7 +2,7 @@ Mu
 ==
 
 A small expression parser, using ANTLR 4. It supports most basic operators
-and `for`-, `while`- and `log`- (print) statements. It is just a basic
+and `while`- and `log`- (print) statements. It is just a basic
 demonstration of how to use the `-visitor` functionality of ANTLR 4.
 
 To run [the demo script](https://github.com/bkiers/Mu/blob/master/src/main/mu/test.mu):
@@ -47,3 +47,6 @@ which will print the following to your console:
 ```
 
 Also see [this stackoverflow Q&A](http://stackoverflow.com/questions/15610183/if-else-statements-in-antlr-using-listeners).
+
+
+@w3b-net-au made a fork including `for-` statements: https://github.com/w3b-net-au/Mu
